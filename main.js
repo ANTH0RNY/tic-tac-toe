@@ -11,9 +11,12 @@ function player(){
     const moves=[]
     const name=''
 
-    const checkWin=function(moves){
-        console.log(moves);
+    const checkWin=function(){
+        // console.log(this.moves);
+        let moves = this.moves
         let ret=false
+        // console.log(moves);
+
         moves.forEach((value,index)=>{
             const first=value[0]
             const second=value[1]
@@ -33,6 +36,10 @@ function player(){
                 if (num >= 3 || numy >= 3){
                     ret=true
                 }
+            }
+            if (moves.includes('11')){
+                if ((moves.includes('00') && moves.includes('22')) || (moves.includes('02') && moves.includes('20')))
+                ret=true
             }
         })
 
@@ -57,5 +64,5 @@ function game(){
 }
 
 const play= player()
-play.moves=['02','12','22']
-console.log(play.checkWin(play.moves));
+play.moves=['01','11','22']
+console.log(play.checkWin());
