@@ -57,37 +57,61 @@ function game() {
   const { board } = gameBoard();
   const player1 = player();
   const player2 = player();
+  let game_state = 0;
+
+  function play(a, b) {
+    // console.log(this);
+    if (this.game_state % 2 === 0) {
+      a();
+      this.game_state++;
+    } else {
+      b();
+      this.game_state++;
+    }
+  }
   return {
     board,
     player1,
     player2,
+    play,
+    game_state,
   };
 }
 
-function selector(select){
-    return document.querySelector(select)
+function selector(select) {
+  return document.querySelector(select);
 }
 
 const play = player();
 play.moves = ["01", "11", "22"];
 // console.log(play.checkWin());
 
+const newGame = game();
+const gameArea = selector("#area");
 
+function populate(theGame) {
+  theGame.board.forEach((i, n) => {
+    i.forEach((j, m) => {
+      let item = document.createElement("div");
 
-const newGame = game()
-const gameArea=selector('#area')
+      item.classList.add("cell");
+      item.setAttribute("data-location", `${n}${m}`);
 
-function populate(theGame){
-    theGame.board.forEach((i,n)=>{
-        i.forEach((j,m)=>{
-            let item=document.createElement('div')
-            item.classList.add('cell')
-            item.setAttribute('data-location', `${n}${m}`)
-            item.addEventListener('click',(e)=>{
-                    console.log(e.target.dataset.location);
-                    // e.target.innerHTML='&#10060'
-            })
-            gameArea.appendChild(item)
-        })
-    })
+      item.addEventListener("click", (e) => {
+        function playerA() {
+          e.target.innerHTML = "&#79;";
+          console.log('Player 1');
+        }
+        function playerB() {
+          // e.target.innerHTML = "&#10060";
+          e.target.innerHTML = "&#10006";
+          console.log("player 2");
+        }
+
+        // console.log(e.target.dataset.location);
+        newGame.play(playerA, playerB);
+      });
+      gameArea.appendChild(item);
+    });
+  });
 }
