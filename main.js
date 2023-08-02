@@ -13,7 +13,7 @@ function player() {
 
   const checkWin = function () {
     // console.log(this.moves);
-    let moves = this.moves;
+    // let moves = this.moves;
     let ret = false;
     // console.log(moves);
 
@@ -46,10 +46,21 @@ function player() {
 
     return ret;
   };
+
+  function playMove(theMove) {
+    moves.push(theMove);
+    console.log(moves);
+  }
+
+  function numberOfMoves() {
+    return moves.length;
+  }
   return {
-    moves,
+    // moves,
     name,
+    playMove,
     checkWin,
+    numberOfMoves,
   };
 }
 
@@ -58,23 +69,41 @@ function game() {
   const player1 = player();
   const player2 = player();
   let game_state = 0;
+  let winner={}
 
   function play(a, b) {
-    // console.log(this);
-    if (this.game_state % 2 === 0) {
-      a();
-      this.game_state++;
-    } else {
-      b();
-      this.game_state++;
+    if (!checkFullBoard()) {
+      if (!player1.checkWin() && !player2.checkWin()) {
+        if (game_state % 2 === 0) {
+          a();
+          game_state++;
+        } else {
+          b();
+          game_state++;
+        }
+      }
+      else{
+        winner= player1.checkWin()? player1 : player2
+        console.log(winner);
+      }
     }
+    // console.log(this);
+  }
+
+  function checkFullBoard() {
+    if (player1.numberOfMoves() + player2.numberOfMoves() >= 9) {
+      // console.log(player1.numberOfMoves() + player2.numberOfMoves())
+      return true;
+    }
+    return false;
   }
   return {
     board,
     player1,
     player2,
     play,
-    game_state,
+    checkFullBoard,
+    // game_state,
   };
 }
 
@@ -100,10 +129,12 @@ function populate(theGame) {
       item.addEventListener("click", (e) => {
         function playerA() {
           e.target.innerHTML = "&#79;";
-          console.log('Player 1');
+          newGame.player1.playMove(e.target.dataset.location);
+          console.log("Player 1");
         }
         function playerB() {
           // e.target.innerHTML = "&#10060";
+          newGame.player2.playMove(e.target.dataset.location);
           e.target.innerHTML = "&#10006";
           console.log("player 2");
         }
