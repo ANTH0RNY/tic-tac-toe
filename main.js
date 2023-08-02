@@ -1,3 +1,5 @@
+const validMoves=['00','01','02','10','11','12','20','21','22']
+
 function gameBoard() {
   const arr0 = Array.from({ length: 3 }, (v, i) => "");
   const arr1 = Array.from({ length: 3 }, (v, i) => "");
@@ -48,7 +50,9 @@ function player() {
   };
 
   function playMove(theMove) {
-    moves.push(theMove);
+    if (validMoves.includes(theMove)){
+      moves.push(theMove);
+    }
     console.log(moves);
   }
 
@@ -71,14 +75,16 @@ function game() {
   let game_state = 0;
   let winner={}
 
-  function play(a, b) {
+  function play(element, theMove) {
     if (!checkFullBoard()) {
       if (!player1.checkWin() && !player2.checkWin()) {
         if (game_state % 2 === 0) {
-          a();
+          element.innerHTML = "&#79"
+          player1.playMove(theMove)
           game_state++;
         } else {
-          b();
+          element.innerHTML = "&#10006"
+          player2.playMove(theMove)
           game_state++;
         }
       }
@@ -87,7 +93,6 @@ function game() {
         console.log(winner);
       }
     }
-    // console.log(this);
   }
 
   function checkFullBoard() {
@@ -127,20 +132,20 @@ function populate(theGame) {
       item.setAttribute("data-location", `${n}${m}`);
 
       item.addEventListener("click", (e) => {
-        function playerA() {
-          e.target.innerHTML = "&#79;";
-          newGame.player1.playMove(e.target.dataset.location);
-          console.log("Player 1");
-        }
-        function playerB() {
-          // e.target.innerHTML = "&#10060";
-          newGame.player2.playMove(e.target.dataset.location);
-          e.target.innerHTML = "&#10006";
-          console.log("player 2");
-        }
+        // function playerA() {
+        //   e.target.innerHTML = "&#79;";
+        //   newGame.player1.playMove(e.target.dataset.location);
+        //   console.log("Player 1");
+        // }
+        // function playerB() {
+        //   // e.target.innerHTML = "&#10060";
+        //   newGame.player2.playMove(e.target.dataset.location);
+        //   e.target.innerHTML = "&#10006";
+        //   console.log("player 2");
+        // }
 
         // console.log(e.target.dataset.location);
-        newGame.play(playerA, playerB);
+        newGame.play(e.target, e.target.dataset.location);
       });
       gameArea.appendChild(item);
     });
