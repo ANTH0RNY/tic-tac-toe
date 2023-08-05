@@ -46,9 +46,13 @@ function player() {
         return ret;
     };
 
-    function playMove(theMove) {
+    function playMove(theMove, icon) {
         if (validMoves.includes(theMove)) {
             moves.push(theMove);
+            console.log('in playMoves');
+            const el = selector(`[data-location="${theMove}"]`)
+            el.innerHTML = icon
+            console.log(el);
         }
         console.log(`${this.name} ${moves}`);
     }
@@ -57,10 +61,13 @@ function player() {
         return moves.length;
     }
 
-    function checkMove(theMove){
+    function checkMove(theMove) {
         return moves.includes(theMove)
     }
 
+    function playersMoves() {
+        return moves
+    }
     return {
         // moves,
         name,
@@ -68,6 +75,7 @@ function player() {
         checkWin,
         numberOfMoves,
         checkMove,
+        playersMoves,
     };
 }
 
@@ -81,26 +89,19 @@ function game() {
     player1.name = 'player1'
     player2.name = 'player2'
 
-    function play(element, theMove) {
+    function play(theMove) {
         if (!checkFullBoard()) {
             if (!player1.checkWin() && !player2.checkWin()) {
-                element.innerHTML = "&#79";
-                player1.playMove(theMove);
-                player2Game(element)
-            } else {
-                winner = player1.checkWin() ? player1 : player2;
-                const main=selector('.area')
-                const winElement=document.createElement('div')
-                winElement.innerHTML=winner.name;
-                main.after(winElement)
-                console.log(winner);
+                player1.playMove(theMove, '&#79');
+                player2Game()
+                console.log(player1.numberOfMoves() + player2.numberOfMoves());
             }
         }
     }
 
 
     function checkFullBoard() {
-        if (player1.numberOfMoves() + player2.numberOfMoves() > 9) {
+        if (player1.numberOfMoves() + player2.numberOfMoves() >= 9) {
             return true;
         }
         return false;
@@ -108,33 +109,28 @@ function game() {
 
 
     function player2Game() {
-        let state = true
-        let theMove = ''//validMoves[Math.floor(Math.random() * validMoves.length)]
-        while (state){
-            theMove = validMoves[Math.floor(Math.random() * validMoves.length)]
-            if (!player1.checkMove(theMove) && !player2.checkMove(theMove)){
-                state=false
+        if (!checkFullBoard()) {
+            const newArray = validMoves.filter((i) => !player1.playersMoves().includes(i) && !player2.playersMoves().includes(i))
+            if (newArray.length) {
+                console.log(newArray);
+                const theMove = newArray[Math.floor(Math.random() * newArray.length)]
+                player2.playMove(theMove, '&#10006')
             }
         }
-
-        player2.playMove(theMove)
-        const element = selector(`[data-location="${theMove}"]`)
-        element.innerHTML = "&#10006";
-        console.log(theMove);
     }
 
     function populate() {
         const gameArea = selector("#area");
-        
+
         board.forEach((i, n) => {
             i.forEach((j, m) => {
                 let item = document.createElement("div");
-    
+
                 item.classList.add("cell");
                 item.setAttribute("data-location", `${n}${m}`);
-    
+
                 item.addEventListener("click", (e) => {
-                    newGame.play(e.target, e.target.dataset.location);
+                    newGame.play(e.target.dataset.location);
                 });
                 gameArea.appendChild(item);
             });
@@ -148,7 +144,6 @@ function game() {
         play,
         checkFullBoard,
         populate,
-        // game_state,
     };
 }
 
@@ -159,5 +154,3 @@ function selector(select) {
 
 
 const newGame = game();
-
-
