@@ -88,15 +88,14 @@ function game() {
     const player2 = player();
     let winner = null;
 
-    player1.name = 'player1'
-    player2.name = 'player2'
+    player2.name = 'Player 2'
 
     function play(theMove) {
         if (!checkFullBoard()) {
             if (!player1.checkWin() && !player2.checkWin()) {
                 player1.playMove(theMove, '&#79');
                 player2Game()
-                console.log(player1.numberOfMoves() + player2.numberOfMoves());
+                // console.log(player1.numberOfMoves() + player2.numberOfMoves());
                 checkWinner()
             }
         }
@@ -123,7 +122,10 @@ function game() {
 
     function populate() {
         const gameArea = selector("#area");
+        gameArea.innerHTML=''
 
+        const main = selector('.form')
+        main.remove()
         board.forEach((i, n) => {
             i.forEach((j, m) => {
                 let item = document.createElement("div");
@@ -145,12 +147,10 @@ function game() {
             winner = player1.checkWin() ? player1 : player2
             winnerElement.innerHTML=player1.name;
             winnerElement.classList.remove('not-visible')
-            console.log(winner);
         }
         else if (checkFullBoard()) {// && !(player1.checkWin() || player2.checkWin())){
             winnerElement.innerHTML='Its a Draw'
             winnerElement.classList.remove('not-visible')
-            console.log('A draw')
         }
     }
 
@@ -178,3 +178,22 @@ function selector(select) {
 
 
 const newGame = game();
+
+function makeForm(){
+    const input=document.createElement('input')
+    const inputBtn=document.createElement('button')
+    inputBtn.innerHTML='Submit name'
+    input.setAttribute('type','text')
+    input.setAttribute('placeholder','Your name')
+    const main = selector('.form')
+    main.appendChild(input)
+    main.appendChild(inputBtn)
+
+    inputBtn.addEventListener('click',()=>{
+        newGame.player1.name=input.value || 'you'
+        newGame.populate()
+    })
+
+}
+
+makeForm()
