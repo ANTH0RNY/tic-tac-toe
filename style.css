@@ -53,3 +53,11 @@ body{
 .cell[data-location^="2"]{
     border-bottom: none;
 }
+
+.not-visible{
+    display: none;
+}
+
+.game-end{
+    text-align: center;
+}

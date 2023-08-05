@@ -47,14 +47,11 @@ function player() {
     };
 
     function playMove(theMove, icon) {
-        if (validMoves.includes(theMove)) {
+        if (validMoves.includes(theMove) && !moves.includes(theMove)) {
             moves.push(theMove);
-            console.log('in playMoves');
             const el = selector(`[data-location="${theMove}"]`)
             el.innerHTML = icon
-            console.log(el);
         }
-        console.log(`${this.name} ${moves}`);
     }
 
     function numberOfMoves() {
@@ -68,6 +65,10 @@ function player() {
     function playersMoves() {
         return moves
     }
+
+    function reset() {
+        moves.length = 0
+    }
     return {
         // moves,
         name,
@@ -76,6 +77,7 @@ function player() {
         numberOfMoves,
         checkMove,
         playersMoves,
+        reset,
     };
 }
 
@@ -95,6 +97,7 @@ function game() {
                 player1.playMove(theMove, '&#79');
                 player2Game()
                 console.log(player1.numberOfMoves() + player2.numberOfMoves());
+                checkWinner()
             }
         }
     }
@@ -112,7 +115,6 @@ function game() {
         if (!checkFullBoard()) {
             const newArray = validMoves.filter((i) => !player1.playersMoves().includes(i) && !player2.playersMoves().includes(i))
             if (newArray.length) {
-                console.log(newArray);
                 const theMove = newArray[Math.floor(Math.random() * newArray.length)]
                 player2.playMove(theMove, '&#10006')
             }
@@ -137,6 +139,27 @@ function game() {
         });
     }
 
+    function checkWinner() {
+        const winnerElement=selector('.game-end');
+        if (player1.checkWin() || player2.checkWin()) {
+            winner = player1.checkWin() ? player1 : player2
+            winnerElement.innerHTML=player1.name;
+            winnerElement.classList.remove('not-visible')
+            console.log(winner);
+        }
+        else if (checkFullBoard()) {// && !(player1.checkWin() || player2.checkWin())){
+            winnerElement.innerHTML='Its a Draw'
+            winnerElement.classList.remove('not-visible')
+            console.log('A draw')
+        }
+    }
+
+    function resetGame() {
+        player1.reset()
+        player2.reset()
+        const gameArea = selector('#area');
+        gameArea.innerHTML = ''
+    }
     return {
         board,
         player1,
@@ -144,6 +167,7 @@ function game() {
         play,
         checkFullBoard,
         populate,
+        resetGame,
     };
 }
 
